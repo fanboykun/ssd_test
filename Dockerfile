@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     wget
 
 # Install Cloud SQL Proxy
-RUN wget https://dl.google.com/cloudsql/cloud-sql-proxy.linux.amd64 -O /usr/local/bin/cloud-sql-proxy \
+RUN wget https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.1/cloud-sql-proxy.linux.amd64 -O /usr/local/bin/cloud-sql-proxy \
     && chmod +x /usr/local/bin/cloud-sql-proxy
 
 # Install Node.js and pnpm
