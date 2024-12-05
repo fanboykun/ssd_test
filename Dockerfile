@@ -49,6 +49,10 @@ RUN pnpm install --frozen-lockfile
 # Copy the rest of the application
 COPY . .
 
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 # Build assets
 RUN pnpm run build
 
@@ -76,10 +80,6 @@ RUN if [ ! -f ".env" ]; then cp .env.example .env && php artisan key:generate; f
 RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
-
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage
 
 # Expose port 8080
 EXPOSE 8080
