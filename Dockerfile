@@ -10,12 +10,7 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     nginx \
-    supervisor \
-    wget
-
-# Install Cloud SQL Proxy
-RUN wget https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.1/cloud-sql-proxy.linux.amd64 -O /usr/local/bin/cloud-sql-proxy \
-    && chmod +x /usr/local/bin/cloud-sql-proxy
+    supervisor
 
 # Install Node.js and pnpm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -62,21 +57,10 @@ COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 # Copy supervisor configuration
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Create startup script
-RUN echo '#!/bin/bash\n\
-echo "Current environment variables:"\n\
-echo "DB_HOST=$DB_HOST"\n\
-echo "DB_CONNECTION=$DB_CONNECTION"\n\
-echo "Starting Cloud SQL Auth Proxy..."\n\
-/usr/local/bin/cloud-sql-proxy --unix-socket=/cloudsql $PROJECT_ID:$REGION:ssd-test-db & \n\
-echo "Starting PHP-FPM and Nginx..."\n\
-supervisord -c /etc/supervisor/conf.d/supervisord.conf' > /usr/local/bin/start.sh \
-    && chmod +x /usr/local/bin/start.sh
-
 # Generate application key if not exists
 RUN if [ ! -f ".env" ]; then cp .env.example .env && php artisan key:generate; fi
 
-# Cache configuration
+# Cache the application
 RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
@@ -84,5 +68,5 @@ RUN php artisan config:cache \
 # Expose port 8080
 EXPOSE 8080
 
-# Set the entry point to our start script
-CMD ["/usr/local/bin/start.sh"]
+# Start supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

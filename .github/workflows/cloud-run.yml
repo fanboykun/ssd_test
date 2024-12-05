@@ -44,7 +44,6 @@ jobs:
             --region ${{ env.REGION }} \
             --platform managed \
             --allow-unauthenticated \
-            --add-cloudsql-instances=${{ env.PROJECT_ID }}:${{ env.REGION }}:ssd-test-db \
             --update-env-vars="APP_KEY=${{ secrets.APP_KEY }}" \
             --update-env-vars="APP_DEBUG=${{ secrets.APP_DEBUG }}" \
             --update-env-vars="DB_CONNECTION=${{ secrets.DB_CONNECTION }}" \
@@ -53,6 +52,4 @@ jobs:
             --update-env-vars="DB_DATABASE=${{ secrets.DB_DATABASE }}" \
             --update-env-vars="DB_USERNAME=${{ secrets.DB_USERNAME }}" \
             --update-env-vars="DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
-            --update-env-vars="PROJECT_ID=${{ env.PROJECT_ID }}" \
-            --update-env-vars="REGION=${{ env.REGION }}" \
             --project ${{ env.PROJECT_ID }}
