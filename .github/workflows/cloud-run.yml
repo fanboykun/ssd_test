@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  REGION: us-central1 
+  REGION: asia-southeast2 
   PROJECT_ID: silver-treat-443814-v3
   SERVICE_NAME: ssd-test
 
