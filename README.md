@@ -84,6 +84,44 @@
 
 6. Visit `http://localhost:8000` in your browser
 
+## Testing
+
+The application uses Pest PHP testing framework for both unit and feature tests.
+
+### Running Tests
+
+1. Run all tests:
+   ```bash
+   php artisan test
+   ```
+
+2. Run tests with coverage report (requires Xdebug):
+   ```bash
+   php artisan test --coverage
+   ```
+
+### Test Structure
+
+- `tests/Unit/`: Contains unit tests for individual components
+  - `PersonTest.php`: Tests for Person model
+- `tests/Feature/`: Contains feature tests for full functionality
+  - `PersonManagementTest.php`: Tests for person management features
+
+### Key Test Cases
+
+1. Unit Tests:
+   - Person model creation and attributes
+   - Date format handling
+   - Model relationships and methods
+
+2. Feature Tests:
+   - Dashboard rendering
+   - Person listing and pagination
+   - Search functionality
+   - CRUD operations
+   - Form validation
+   - Authentication
+
 ## Code Documentation
 
 ### Database Schema
@@ -144,13 +182,15 @@ Schema::create('persons', function (Blueprint $table) {
 
 ### Authentication
 
-All endpoints require authentication using Laravel Sanctum. Users must first log in through the web interface at `/login`.
+All endpoints require authentication using Laravel Sanctum. Users must first log
+in through the web interface at `/login`.
 
 ### Available Endpoints
 
 #### Dashboard (`/dashboard`)
 
-The main interface for managing persons. Protected by the `auth` and `verified` middleware.
+The main interface for managing persons. Protected by the `auth` and `verified`
+middleware.
 
 ##### Features:
 
@@ -168,9 +208,9 @@ The main interface for managing persons. Protected by the `auth` and `verified` 
    - Form Data:
      ```json
      {
-       "name": "string",
-       "birthday": "date (Y-m-d)",
-       "residence": "string"
+         "name": "string",
+         "birthday": "date (Y-m-d)",
+         "residence": "string"
      }
      ```
    - Response: Returns the created person data
@@ -181,10 +221,10 @@ The main interface for managing persons. Protected by the `auth` and `verified` 
    - Form Data:
      ```json
      {
-       "person_id": "integer",
-       "name": "string",
-       "birthday": "date (Y-m-d)",
-       "residence": "string"
+         "person_id": "integer",
+         "name": "string",
+         "birthday": "date (Y-m-d)",
+         "residence": "string"
      }
      ```
    - Response: Returns the updated person data
@@ -195,14 +235,15 @@ The main interface for managing persons. Protected by the `auth` and `verified` 
    - Form Data:
      ```json
      {
-       "person_id": "integer"
+         "person_id": "integer"
      }
      ```
    - Response: Returns a success message
 
 ### Dashboard Interface
 
-The dashboard (`/dashboard`) provides a full-featured interface for managing persons:
+The dashboard (`/dashboard`) provides a full-featured interface for managing
+persons:
 
 1. **Search Functionality**
    - Real-time search by person name
@@ -244,4 +285,5 @@ The dashboard (`/dashboard`) provides a full-featured interface for managing per
    - Optimized table layout for mobile
    - Touch-friendly buttons and inputs
 
-All operations are performed in real-time using Livewire, providing instant feedback without page reloads.
+All operations are performed in real-time using Livewire, providing instant
+feedback without page reloads.

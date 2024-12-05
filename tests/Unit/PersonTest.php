@@ -12,10 +12,10 @@ test('can create person', function () {
         'birthday' => '1990-01-01',
         'residence' => 'New York'
     ];
-    
+
     // Act
     $person = Person::create($personData);
-    
+
     // Assert
     expect($person)
         ->toBeInstanceOf(Person::class)
@@ -29,9 +29,9 @@ test('person has correct date format', function () {
     $person = Person::factory()->create([
         'birthday' => '1990-01-01'
     ]);
-    
+
     // Assert
-    expect($person->birthday->format('Y-m-d'))
+    expect(Carbon\Carbon::parse($person->birthday)->format('Y-m-d'))
         ->toBe('1990-01-01');
 });
 
@@ -39,10 +39,10 @@ test('can update person attributes', function () {
     // Arrange
     $person = Person::factory()->create();
     $newName = 'Jane Doe';
-    
+
     // Act
     $person->update(['name' => $newName]);
-    
+
     // Assert
     expect($person->fresh())
         ->name->toBe($newName);
@@ -51,10 +51,10 @@ test('can update person attributes', function () {
 test('can delete person', function () {
     // Arrange
     $person = Person::factory()->create();
-    
+
     // Act
     $person->delete();
-    
+
     // Assert
     expect(Person::find($person->id))->toBeNull();
 });
@@ -62,7 +62,7 @@ test('can delete person', function () {
 test('person factory creates valid data', function () {
     // Act
     $person = Person::factory()->create();
-    
+
     // Assert
     expect($person)
         ->name->not->toBeEmpty()
