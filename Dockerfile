@@ -10,7 +10,12 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     nginx \
-    supervisor
+    supervisor \
+    wget
+
+# Install Cloud SQL Proxy
+RUN wget https://dl.google.com/cloudsql/cloud-sql-proxy.linux.amd64 -O /usr/local/bin/cloud-sql-proxy \
+    && chmod +x /usr/local/bin/cloud-sql-proxy
 
 # Install Node.js and pnpm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
