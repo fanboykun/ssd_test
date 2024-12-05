@@ -12,9 +12,10 @@ RUN apt-get update && apt-get install -y \
     nginx \
     supervisor
 
-# Install Node.js
+# Install Node.js and pnpm
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+    && apt-get install -y nodejs \
+    && npm install -g pnpm
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -32,19 +33,19 @@ WORKDIR /var/www/html
 COPY composer.json composer.lock ./
 
 # Copy package files
-COPY package.json package-lock.json ./
+COPY package.json pnpm-lock.yaml ./
 
 # Install composer dependencies
 RUN composer install --prefer-dist --no-dev --no-scripts --no-progress --no-interaction
 
-# Install npm dependencies
-RUN npm ci
+# Install pnpm dependencies
+RUN pnpm install --frozen-lockfile
 
 # Copy the rest of the application
 COPY . .
 
 # Build assets
-RUN npm run build
+RUN pnpm run build
 
 # Copy nginx configuration
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
