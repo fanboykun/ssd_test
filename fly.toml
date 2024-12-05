@@ -1,0 +1,24 @@
+app = "ssd-test"
+primary_region = "sin"  # Change this to your preferred region
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+
+[env]
+  APP_ENV = "production"
+  APP_DEBUG = "false"
+  APP_URL = "https://ssd-test.fly.dev"  # Change this to your app's URL
+  DB_CONNECTION = "mysql"
