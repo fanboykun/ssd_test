@@ -58,6 +58,17 @@ COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 # Copy supervisor configuration
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Create script to check environment and start services
+RUN echo '#!/bin/bash\n\
+echo "Current environment variables:"\n\
+echo "APP_DEBUG=${APP_DEBUG}"\n\
+echo "DB_CONNECTION=${DB_CONNECTION}"\n\
+echo "DB_HOST=${DB_HOST}"\n\
+php artisan config:clear\n\
+php artisan cache:clear\n\
+supervisord -c /etc/supervisor/conf.d/supervisord.conf' > /usr/local/bin/start.sh \
+    && chmod +x /usr/local/bin/start.sh
+
 # Generate application key if not exists
 RUN if [ ! -f ".env" ]; then cp .env.example .env && php artisan key:generate; fi
 
@@ -73,5 +84,5 @@ RUN chown -R www-data:www-data /var/www/html \
 # Expose port 8080
 EXPOSE 8080
 
-# Start supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Set the entry point to our start script
+CMD ["/usr/local/bin/start.sh"]
