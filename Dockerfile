@@ -61,7 +61,9 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN if [ ! -f ".env" ]; then cp .env.example .env && php artisan key:generate; fi
 
 # Cache the application
-RUN php artisan config:cache \
+RUN php artisan config:clear \
+    && php artisan cache:clear \
+    && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
