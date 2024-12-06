@@ -71,7 +71,9 @@ RUN chmod +x /cloud_sql_proxy
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
+echo "Starting Cloud SQL Proxy..."\n\
 /cloud_sql_proxy -dir=/cloudsql -instances=silver-treat-443814-v3:asia-southeast2:ssd-test-db=tcp:3306 & \n\
+echo "Starting supervisor..."\n\
 /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf\n\
 ' > /start.sh && chmod +x /start.sh
 
