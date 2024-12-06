@@ -51,11 +51,6 @@ RUN chown -R www-data:www-data /var/www/html \
 # Build assets
 RUN pnpm run build
 
-# Cache the application
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
-
 # Copy nginx configuration
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 
@@ -64,6 +59,11 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Generate application key if not exists
 RUN if [ ! -f ".env" ]; then cp .env.example .env && php artisan key:generate; fi
+
+# Cache the application
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
 
 # Install Cloud SQL Proxy
 ADD https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 /cloud_sql_proxy
