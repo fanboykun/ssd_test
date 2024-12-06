@@ -65,8 +65,18 @@ RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
+# Install Cloud SQL Proxy
+ADD https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 /cloud_sql_proxy
+RUN chmod +x /cloud_sql_proxy
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+/cloud_sql_proxy -dir=/cloudsql -instances=silver-treat-443814-v3:asia-southeast2:ssd-test-db=tcp:3306 & \n\
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf\n\
+' > /start.sh && chmod +x /start.sh
+
 # Expose port 8080
 EXPOSE 8080
 
-# Start supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Start both services using the startup script
+CMD ["/start.sh"]
