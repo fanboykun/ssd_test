@@ -178,6 +178,17 @@ Schema::create('persons', function (Blueprint $table) {
 - Location: `database/seeders/DatabaseSeeder.php`
 - Seeds 10 random persons by default
 
+## Deployment
+
+This project is configured for deployment on Google Cloud Run with Cloud SQL as the database provider. For detailed deployment instructions, please refer to our [Deployment Guide](DEPLOYMENT.md).
+
+Key deployment features:
+- Serverless deployment on Google Cloud Run
+- MySQL database on Cloud SQL
+- Continuous deployment via GitHub Actions
+- Secure database connection using Cloud SQL Auth Proxy
+- HTTPS enforced for all traffic
+
 ## API Documentation
 
 ### Authentication
