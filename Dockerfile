@@ -60,13 +60,6 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Generate application key if not exists
 RUN if [ ! -f ".env" ]; then cp .env.example .env && php artisan key:generate; fi
 
-# Cache the application
-RUN php artisan config:clear \
-    && php artisan cache:clear \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
-
 # Install Cloud SQL Proxy
 ADD https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 /cloud_sql_proxy
 RUN chmod +x /cloud_sql_proxy
@@ -75,6 +68,12 @@ RUN chmod +x /cloud_sql_proxy
 RUN echo '#!/bin/bash\n\
 echo "Starting Cloud SQL Proxy..."\n\
 /cloud_sql_proxy -dir=/cloudsql -instances=silver-treat-443814-v3:asia-southeast2:ssd-test-db=tcp:3306 & \n\
+echo "Clearing and rebuilding cache..."\n\
+php artisan config:clear\n\
+php artisan cache:clear\n\
+php artisan config:cache\n\
+php artisan route:cache\n\
+php artisan view:cache\n\
 echo "Starting supervisor..."\n\
 /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf\n\
 ' > /start.sh && chmod +x /start.sh
