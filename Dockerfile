@@ -51,6 +51,11 @@ RUN chown -R www-data:www-data /var/www/html \
 # Build assets
 RUN pnpm run build
 
+# Cache the application
+RUN php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache
+
 # Copy nginx configuration
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 
@@ -66,40 +71,11 @@ RUN chmod +x /cloud_sql_proxy
 
 # Create startup script
 RUN echo '#!/bin/bash\n\
-\n\
-# Enable error logging\n\
-set -e\n\
-\n\
-echo "Starting Cloud SQL Proxy..."\n\
-/cloud_sql_proxy -dir=/cloudsql -instances=silver-treat-443814-v3:asia-southeast2:ssd-test-db=tcp:3306 & \n\
-PROXY_PID=$!\n\
-\n\
-echo "Waiting for Cloud SQL Proxy to be ready..."\n\
-sleep 5\n\
-\n\
-# Check if proxy is running\n\
-if ! kill -0 $PROXY_PID 2>/dev/null; then\n\
-    echo "Cloud SQL Proxy failed to start"\n\
-    exit 1\n\
-fi\n\
-\n\
-echo "Setting proper permissions..."\n\
-chown -R www-data:www-data /var/www/html/storage\n\
-chmod -R 775 /var/www/html/storage\n\
-\n\
-echo "Clearing and rebuilding cache..."\n\
-php artisan config:clear\n\
-php artisan cache:clear\n\
-php artisan view:clear\n\
-\n\
-echo "Building cache..."\n\
-php artisan config:cache\n\
-php artisan route:cache\n\
-php artisan view:cache\n\
-\n\
-echo "Starting supervisor..."\n\
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf\n\
-' > /start.sh && chmod +x /start.sh
+    echo "Starting Cloud SQL Proxy..."\n\
+    /cloud_sql_proxy -dir=/cloudsql -instances=silver-treat-443814-v3:asia-southeast2:ssd-test-db=tcp:3306 & \n\
+    echo "Starting supervisor..."\n\
+    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf\n\
+    ' > /start.sh && chmod +x /start.sh
 
 # Expose port 8080
 EXPOSE 8080

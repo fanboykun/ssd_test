@@ -23,15 +23,15 @@ class AppServiceProvider extends ServiceProvider
     {
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
-            
+
             // Trust Cloud Run's load balancer
             Request::macro('isSecure', function () {
                 $isSecure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
                 $hasForwardedProto = isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https';
-                
+
                 return $isSecure || $hasForwardedProto;
             });
-            
+
             // Trust all proxies in Cloud Run environment
             Request::setTrustedProxies(
                 ['*'],
